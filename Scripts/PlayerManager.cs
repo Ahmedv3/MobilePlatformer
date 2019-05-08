@@ -59,6 +59,7 @@ public class PlayerManager : MonoBehaviour
                 anim.SetInteger("State", 3);
             }
         }
+
     }
 
    void MovePlayer(float playerSpeed)
