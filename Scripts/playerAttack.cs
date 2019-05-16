@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class playerAttack : MonoBehaviour
 {
+
+
+
     private bool attacking = false;
     private float attackTimer = 0;
     private float attackCooldown = 0.3f;
@@ -18,13 +21,18 @@ public class playerAttack : MonoBehaviour
         attackTrigger.enabled = false;
     }
 
+    public void attack()
+    {
+        attacking = true;
+        attackTimer = attackCooldown;
+        attackTrigger.enabled = true;
+    }
+
     void Update()
     {
         if(Input.GetKeyDown("a")&& !attacking)
         {
-            attacking = true;
-            attackTimer = attackCooldown;
-            attackTrigger.enabled = true;
+            attack();
         }
 
         if (attacking)
@@ -42,4 +50,6 @@ public class playerAttack : MonoBehaviour
 
         anim.SetBool("attacking", attacking);
     }
+
+    
 }

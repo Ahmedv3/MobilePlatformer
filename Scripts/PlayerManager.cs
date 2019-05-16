@@ -8,6 +8,8 @@ public class PlayerManager : MonoBehaviour
     public float speedX;
     public float jumpSpeedY;
 
+    int playerHealth = 100;
+
     bool facingRight, jumping, grounded;
     float speed;
 
