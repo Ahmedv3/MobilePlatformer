@@ -5,20 +5,27 @@ using UnityEngine;
 public class enemyManager : MonoBehaviour
 {
 
+    // Stats
+    int enemyHealth;
+    int maxEnemyHealth = 100;
 
-    int enemyHealth = 100;
     Animator anim;
     Rigidbody2D rb;
 
 
+    bool hit;
+
+    // moving stuff
     public float speedX;
     bool facingRight = true;
     public float distance;
     public Transform groundDetection;
 
 
-    void Start()
+   void Start()
     {
+        enemyHealth = maxEnemyHealth;
+
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         facingRight = true;
@@ -26,9 +33,10 @@ public class enemyManager : MonoBehaviour
 
     void Update()
     {
-        animMoveEnemy(speedX); //player movement
-        
 
+        animMoveEnemy(speedX); 
+               
+        //player movement
         transform.Translate(Vector2.right * speedX * Time.deltaTime );
 
         RaycastHit2D groundInfo = Physics2D.Raycast(groundDetection.position, Vector2.down, distance);
@@ -36,7 +44,7 @@ public class enemyManager : MonoBehaviour
         {
             if (facingRight == true)
             {
-                transform.eulerAngles = new Vector3(0, -200, 0);
+                transform.eulerAngles = new Vector3(0, -170, 0);
                 facingRight = false;
             }
             else
@@ -46,14 +54,22 @@ public class enemyManager : MonoBehaviour
             }
 
         }
-       
+
+        if(enemyHealth <= 0)
+        {
+           // anim.SetInteger("State", 5);
+           Destroy(gameObject);
+           speedX = 0;
+
+        }
+
 
     }
 
     void animMoveEnemy(float enemySpeed)
     {
         // code player movement
-        if (enemySpeed < 0  || enemySpeed > 0 )
+        if (enemySpeed < 0  || enemySpeed > 0 || hit == false)
         {
             anim.SetInteger("State", 2);
         }
@@ -61,7 +77,36 @@ public class enemyManager : MonoBehaviour
         {
             anim.SetInteger("State", 0);
         }
+        if(hit == true)
+        {
+            anim.SetInteger("State", 4);
+            hit = false;
+        }
+    }
 
-      //  rb.velocity = new Vector3(speed, rb.velocity.y, 0);
+    private void OnTriggerEnter2D(Collider2D coll)
+    {
+
+        if (coll.gameObject.tag == "Player")
+        {
+            anim.SetBool("damage", true);
+        }
+
+    }
+
+    private void OnTriggerExit2D(Collider2D coll)
+    {
+
+        if (coll.gameObject.tag == "Player")
+        {
+            anim.SetBool("damage", false);
+        }
+
+    }
+
+    public void Damage(int damage)
+    {
+        hit = true;
+        enemyHealth -= damage;
     }
 }

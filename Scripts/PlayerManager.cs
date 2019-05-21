@@ -1,35 +1,55 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviour
 {
 
+    
+
+    // Stats
+    public int playerHealth;
+    int maxHealth = 5;
+
+    bool playerHit;
+    bool hitting;
+
+    // moving 'n jumping stuff 
+    bool facingRight, jumping, grounded;
+    float speed;
     public float speedX;
     public float jumpSpeedY;
 
-    int playerHealth = 100;
-
-    bool facingRight, jumping, grounded;
-    float speed;
-
     Animator anim;
+    Animator anim2;
     Rigidbody2D rb;
+
     // Start is called before the first frame update
     void Start()
     {
+
+        playerHit = false;
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         facingRight = true;
+
+        hitting = false;
+
+        playerHealth = maxHealth;
         
     }
+
+    
 
     // Update is called once per frame
     void Update()
     {
+
+        
         MovePlayer(speed); //player movement
         Flip();
-
+        hitting = false;
         // left player movement
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -58,22 +78,32 @@ public class PlayerManager : MonoBehaviour
                 grounded = false;
                 jumping = true;
                 rb.AddForce(new Vector2(rb.velocity.x, jumpSpeedY));
-                anim.SetInteger("State", 3);
+               
             }
+        }
+
+        if(playerHealth <= 0)
+        {
+            Die();
         }
 
     }
 
-   void MovePlayer(float playerSpeed)
+    void MovePlayer(float playerSpeed)
     {
         // code player movement
-        if(playerSpeed < 0 && !jumping || playerSpeed > 0 && !jumping)
+        if (playerSpeed < 0 && !jumping || playerSpeed > 0 && !jumping)
         {
             anim.SetInteger("State", 2);
         }
-        if(playerSpeed == 0 && !jumping)
+        if (playerSpeed == 0 && !jumping )
         {
             anim.SetInteger("State", 0);
+        }
+        if (playerHit == true)
+        {
+            anim.SetInteger("State", 4);
+            playerHit = false;
         }
 
         rb.velocity = new Vector3(speed, rb.velocity.y, 0);
@@ -95,7 +125,7 @@ public class PlayerManager : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if(other.gameObject.tag == "Ground")
+        if(other.gameObject.tag == "Ground" || other.gameObject.tag == "Platform")
         {
             grounded = true;
             jumping = false;
@@ -127,5 +157,35 @@ public class PlayerManager : MonoBehaviour
             anim.SetInteger("State", 3);
         }
     }
+
+    void Die()
+    {
+
+        //restart
+        SceneManager.LoadScene("GameScene");
+    }
+
+
+    public void Damage(int damage)
+    {
+        playerHit = true;
+        playerHealth -= damage;
+    }
+
+    public IEnumerator Knockback(float knockDuration, float knockPower, Vector3 knockDirection)
+    {
+        float timer = 0;
+        while (knockDuration > timer)
+        {
+            timer += Time.deltaTime;
+
+            rb.AddForce(new Vector3(knockDirection.x * -100, knockDirection.y * knockPower, transform.position.z));
+        }
+
+        yield return 0;
+    }
+
+
+
 
 }
