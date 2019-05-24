@@ -20,7 +20,7 @@ public class enemyAttackTrigger : MonoBehaviour
         if (coll.isTrigger != true && coll.CompareTag("Player"))
         {
             coll.SendMessageUpwards("Damage", dmg);
-            StartCoroutine(player.Knockback(0.02f, 100, player.transform.position));
+            StartCoroutine(player.Knockback(0.02f, 70, player.transform.position));
         }
 
     }

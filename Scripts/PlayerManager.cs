@@ -5,15 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class PlayerManager : MonoBehaviour
 {
-
-    
-
     // Stats
     public int playerHealth;
     int maxHealth = 5;
 
     bool playerHit;
-    bool hitting;
 
     // moving 'n jumping stuff 
     bool facingRight, jumping, grounded;
@@ -25,6 +21,8 @@ public class PlayerManager : MonoBehaviour
     Animator anim2;
     Rigidbody2D rb;
 
+    private gameMaster GM;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,22 +32,19 @@ public class PlayerManager : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         facingRight = true;
 
-        hitting = false;
 
         playerHealth = maxHealth;
+
+        GM = GameObject.FindGameObjectWithTag("GameMaster").GetComponent<gameMaster>();
         
     }
-
-    
 
     // Update is called once per frame
     void Update()
     {
-
-        
+     
         MovePlayer(speed); //player movement
         Flip();
-        hitting = false;
         // left player movement
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -158,9 +153,13 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public void knockup()
+    {
+        rb.AddForce(new Vector2(rb.velocity.x, 450));
+    }
+
     void Die()
     {
-
         //restart
         SceneManager.LoadScene("GameScene");
     }
@@ -187,5 +186,22 @@ public class PlayerManager : MonoBehaviour
 
 
 
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Coin"))
+        {
+            Destroy(collision.gameObject);
+            gameMaster.instance.changeScore();
+        }
+
+        if (collision.CompareTag("Heart"))
+        {
+            Destroy(collision.gameObject);
+            heartUP.instance.heartOneUP();
+        }
+    }
+
+    
 
 }
