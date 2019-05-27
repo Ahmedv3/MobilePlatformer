@@ -161,7 +161,7 @@ public class PlayerManager : MonoBehaviour
     void Die()
     {
         //restart
-        SceneManager.LoadScene("GameScene");
+       // SceneManager.LoadScene("GameScene");
     }
 
 
