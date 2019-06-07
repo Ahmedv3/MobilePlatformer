@@ -6,10 +6,14 @@ using UnityEngine.SceneManagement;
 public class PlayerManager : MonoBehaviour
 {
     // Stats
+    bool playerHit;
     public int playerHealth;
     int maxHealth = 5;
 
-    bool playerHit;
+
+    public GameObject coinParticle;
+
+    
 
     // moving 'n jumping stuff 
     bool facingRight, jumping, grounded;
@@ -42,6 +46,7 @@ public class PlayerManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
      
         MovePlayer(speed); //player movement
         Flip();
@@ -184,13 +189,11 @@ public class PlayerManager : MonoBehaviour
         yield return 0;
     }
 
-
-
-
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Coin"))
         {
+            Instantiate(coinParticle, collision.transform.position, Quaternion.identity);
             Destroy(collision.gameObject);
             gameMaster.instance.changeScore();
         }
